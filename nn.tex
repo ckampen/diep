@@ -1,0 +1,225 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{mathtools}
+\usepackage{listings}
+\usepackage{booktabs}
+
+\begin{document}
+\title{Deep Neural Nets}
+
+\author{Casper van Kampen}
+\date{}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+% \begin{abstract}
+% This is the abstract section\ldots
+% \end{abstract}
+
+
+\section{Softmax classifier}
+
+Squash all elements in a vector $(\mathrm{z})$ to a value below 1. The sum of this vector will be 1.
+\\[11pt]
+$\sigma{(\mathrm{z})}_j = \frac{\mathrm{e}^{z_j}}{\sum_{i=1}^{k} \mathrm{e}^{z_k}}$
+\\
+\lstinputlisting[language=Python, frame=single]
+{softmax.py}
+
+\newpage
+\section{Activation functions}
+
+Functions that decide if a neuron activates or not.
+
+\subsection{ReLU}
+
+Rectified Linear Unit
+\\[11pt]
+$f(x) = \max(0,x)$
+\\
+\lstinputlisting[language=Python, frame=single]
+{relu.py}
+
+Or with numpy:
+
+\lstinputlisting[language=Python, frame=single]
+{relu_np.py}
+
+\subsection{Sigmoid}
+
+$\sigma(x) = \frac{1}{1 + \mathrm{e}^{-x}}$
+\\
+\lstinputlisting[language=Python, frame=single]
+{sigmoid.py}
+% \\
+% $y = \frac{1}{1 + \mathrm{e}^{-x}}$
+% \\
+derivative:\\[11pt]
+$\frac{d\sigma(x)}{dx} = \frac{\mathrm{e}^{x}}{{(1 + \mathrm{e}^{x})}^2}$
+\\[11pt]
+$\frac{d\sigma(x)}{dx} = \sigma(x) (1 - \sigma(x))$
+Research this!
+
+\subsection{tanh}
+
+$\frac{1 + \mathrm{e}^{-2x}}
+	  {1 - \mathrm{e}^{-2x}}$
+\\[11pt]
+Or using the sigmoid function:
+\\[11pt]
+$2\sigma(2x) -1$
+\\[11pt]
+thanh is a scaled version of sigmoid.
+\\[11pt]
+\lstinputlisting[language=Python, frame=single]
+{tanh.py}
+
+\newpage
+\section{Cost functions}
+
+\subsection{Cross Entropy}
+
+$\mathrm{H}(p,q) = - \displaystyle\sum_{x} p_x \log{q_x}$\\[11pt]
+Use Cross entropy cost function so 2 networks with the same result but with different cerntenty will not have the same error.\\
+e.g.\\
+in a 3 classes classification problem consider the followin 2 hypotheses (result from a softmax layer):\\
+\begin{table}[h]
+\centering
+\caption{Net 1}
+\label{table:name}
+\begin{tabular}{lcr}
+\toprule
+\textbf{H} & \textbf{Y} & \textbf{correct}\\
+\midrule
+0.3 0.3 0.4 & 0 0 1 & 1\\
+0.3 0.4 0.3 & 0 1 0 & 1\\
+0.1 0.2 0.7 & 1 0 0 & 0\\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{table}[h]
+\centering
+\caption{Net 2}
+\label{table:name}
+\begin{tabular}{lcr}
+\toprule
+\textbf{H} & \textbf{Y} & \textbf{correct}\\
+\midrule
+0.1 0.2 0.7 & 0 0 1 & 1\\
+0.1 0.7 0.2 & 0 1 0 & 1\\
+0.3 0.4 0.3 & 1 0 0 & 0\\
+\bottomrule
+\end{tabular}
+\end{table}
+\\[11pt]
+correctness Net 1 = $(1 + 1 + 0) / 3 = \frac{2}{3}$\\
+correctness Net 2 = $(1 + 1 + 0) / 3 = \frac{2}{3}$\\
+the error rate = $ 1 - \frac{2}{3} = \frac{1}{3}$ in both cases.\\[11pt]
+both nets have the same result but net 2 is much more certain in ist prediction.\
+it is statistically much closer to te answer.\
+we use cross entropy so that this difference translates to the error of the net
+\\[11pt]
+Calulating the cross entropy for Net 1.\\
+\begin{math}
+  net 1_1 = -(0 * \log(0.3)) + (0 * \log(0.3)) + (1 * \log(0.4)) = \log(0.4) = 0.916\ldots\\[11pt]
+  net 1_2 = -(0 * \log(0.3)) + (1 * \log(0.4)) + (0 * \log(0.3)) = \log(0.4) = 0.916\ldots\\[11pt]
+net 1_3 = -(1 * \log(0.1)) + (0 * \log(0.2)) + (0 * \log(0.7)) = \log(0.1) = 2.302\ldots\\[11pt]
+net 1 = (-\log(0.4) + -\log(0.4) + -\log(0.1)) /3 = 1.378\ldots\\[11pt]
+\end{math}
+And then Net 2.\\
+\begin{math}
+  \mathrm{H}(net2_{1}) = -(0 * \log(0.1)) + (0 * \log(0.2)) + (1 * \log(0.7))\\ = -\log(0.7)\\ = 0.356\ldots\\[11pt]
+  \mathrm{H}(net2_{2}) = -(0 * \log(0.1)) + (1 * \log(0.7)) + (0 * \log(0.2))\\ = -\log(0.7)\\ = 0.356\ldots\\[11pt]
+  \mathrm{H}(net2_{3}) = -(1 * \log(0.3)) + (0 * \log(0.4)) + (0 * \log(0.3))\\ = -\log(0.3)\\ = 1.203\ldots\\[11pt]
+  net_{2} = (-\log(0.7) + -\log(0.7) + -\log(0.3)) /3 = 0.639\ldots\\[11pt]
+\end{math}
+We see that Net 1 has a higher error than Net 3 over the 3 samples given.
+\lstinputlisting[language=Python, frame=single]
+{cross_entropy.py}
+\newpage
+\section{Gradient descent}
+\subsection{Back propagation}
+\newpage
+\section{Neurons}
+
+Neuron architecture\\[11pt]
+x > N > Activation > y or 0
+
+\subsection{Feed Forward}
+Network layer is given by the formula:\\[11pt]
+$W x + b$\\[11pt]
+Linear network layer containing $\mathrm{m}$ neurons and $\mathrm{m} \times \mathrm{n}$ inputs.\\[11pt]
+\[
+\begin{pmatrix}
+  w_{1} \\ % & w_{1,2} & \cdots & w_{1,n} \\
+  w_{2} \\ % & w_{2,2} & \cdots & w_{2,n} \\
+  \vdots \\ %i & \vdots & \ddots & \vdots \\
+  w_{m} % & w_{m,2} & \cdots & w_{m,n}
+\end{pmatrix}
+\bullet
+\begin{pmatrix}
+  x_{1,1} & x_{1,2} & \cdots & x_{1,n} \\
+  x_{2,1} & x_{2,2} & \cdots & x_{2,n} \\
+  \vdots & \vdots & \ddots & \vdots \\
+  x_{m,1} & x_{m,2} & \cdots & x_{m,n}
+\end{pmatrix}
++
+\begin{pmatrix}
+  b_{1} \\ % & w_{1,2} & \cdots & w_{1,n} \\
+  b_{2} \\ % & w_{2,2} & \cdots & w_{2,n} \\
+  \vdots \\ %i & \vdots & \ddots & \vdots \\
+  b_{m} % & w_{m,2} & \cdots & w_{m,n}
+\end{pmatrix}
+=
+\begin{pmatrix}
+  w_{1}x_{1,1}+w_{1}x_{1,2}\cdots + w_{1}x_{1,n}+b_{1}\\
+  w_{2}x_{2,1}+w_{2}x_{2,2}\cdots + w_{2}x_{2,n}+b_{2}\\
+  \vdots \\
+  w_{m}x_{m,1}+w_{m}x_{m,2}\cdots + w_{m}x_{m,n}+b_{m}
+\end{pmatrix}
+\]
+
+% \\
+
+\lstinputlisting[language=Python, frame=single]
+{linear.py}
+
+\newpage
+\section{Tensorflow}
+
+\subsection{Load Data}
+
+First, we will need to load the training and test data.
+We will use the MNIST dataset for this example to classify images of digits.
+Tensorflow provides functions to deal with MNIST data so we will use this to
+load the data.
+
+\lstinputlisting[language=Python, basicstyle=\tiny, frame=single]
+{tf/data.py}
+
+\newpage
+\subsection{Network layout}
+
+We define the layout of the net in terms of layers.
+Tensorflow wlil create a `computation graph' in memory that wil be executed
+in the training stage. There is no computation done in this stage.
+
+\lstinputlisting[language=Python, basicstyle=\tiny, frame=single]
+{tf/neural_net.py}
+
+\subsubsection{logits}
+The logits function is the inverse of the logistic function.
+Logit is a function that maps probabilities ([0, 1]) to R ((-inf, inf))
+
+$\mathrm{L} = \ln{\frac{p}{1 - p}}$\\
+$\mathrm{p} = \frac{1}{1 + \mathrm{e}^{-l}}$
+
+
+\newpage
+\subsection{Learning}
+\lstinputlisting[language=Python, basicstyle=\tiny, frame=single]
+{tf/learning.py}
+
+\end{document}
