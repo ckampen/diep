@@ -2,6 +2,7 @@
 \usepackage{mathtools}
 \usepackage{listings}
 \usepackage{booktabs}
+\usepackage{amsfonts}
 
 \begin{document}
 \title{Deep Neural Nets}
@@ -145,11 +146,56 @@ We see that Net 1 has a higher error than Net 3 over the 3 samples given.
 \section{Neurons}
 
 Neuron architecture\\[11pt]
-x > N > Activation > y or 0
+$X \to N (W X + b) \to Activation (ReLU, \sigma, tanh) \to [0, y]$
 
 \subsection{Feed Forward}
 Network layer is given by the formula:\\[11pt]
-$W x + b$\\[11pt]
+$W X + b$\\[11pt]
+
+Multiplication of two matrices:
+
+\begin{math}
+  Y = WX =
+  \begin{pmatrix}
+    1 & 0 & 0\\
+    -2 & 1 & 0\\
+    0 & 0 & 1
+  \end{pmatrix}
+  \begin{pmatrix}
+    2 & 4 & -2\\
+    4 & 9 & -3\\
+    -2 & -3 & 7
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    2 & 4 & -2\\
+    0 & 1 & 1\\
+    -2 & -3 & 7
+  \end{pmatrix}
+\end{math}
+
+
+$
+\vec{\mathbf{Y_1}} =\\
+( 1 \times 2) + (0 \times 4) + (0 \times -2) = 2,\\
+( 1 \times 4) + (0 \times 9) + (0 \times -3) = 4,\\
+( 1 \times -2) + (0 \times -3) + (0 \times 7) = -2
+$
+
+$
+\vec{\mathbf{Y_2}} =\\
+(-2 \times 2) + (1 \times 4) + (0 \times -2) = 0,\\
+(-2 \times 4) + (1 \times 9) + (0 \times -3) = 1,\\
+(-2 \times -2) + (1 \times 3) + (0 \times 7) = 1
+$
+
+$
+\vec{\mathbf{Y_3}} =\\
+( 0 \times 2) + (0 \times 4) + (1 \times -2) = -2,\\
+( 0 \times 4) + (0 \times 9) + (1 \times -3) = -3,\\
+( 0 \times -2) + (0 \times -3) + (1 \times 7) = 7
+$
+\\[11pt]
 Linear network layer containing $\mathrm{m}$ neurons and $\mathrm{m} \times \mathrm{n}$ inputs.\\[11pt]
 \[
 \begin{pmatrix}
@@ -181,7 +227,12 @@ Linear network layer containing $\mathrm{m}$ neurons and $\mathrm{m} \times \mat
 \end{pmatrix}
 \]
 
+
+
 % \\
+\par
+\\[11pt]
+Simple Numpy function.
 
 \lstinputlisting[language=Python, frame=single]
 {linear.py}
@@ -211,7 +262,7 @@ in the training stage. There is no computation done in this stage.
 
 \subsubsection{logits}
 The logits function is the inverse of the logistic function.
-Logit is a function that maps probabilities ([0, 1]) to R ((-inf, inf))
+Logit is a function that maps probabilities ([0, 1]) to $\mathbb{R} ((-\infty, \infty))$
 
 $\mathrm{L} = \ln{\frac{p}{1 - p}}$\\
 $\mathrm{p} = \frac{1}{1 + \mathrm{e}^{-l}}$
