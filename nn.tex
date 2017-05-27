@@ -145,12 +145,15 @@ We see that Net 1 has a higher error than Net 3 over the 3 samples given.
 \newpage
 \section{Neurons}
 
+\subsection{Feed Forward}
 Neuron architecture\\[11pt]
 $X \to N (W X + b) \to Activation (ReLU, \sigma, tanh) \to [0, y]$
 
-\subsection{Feed Forward}
 Network layer is given by the formula:\\[11pt]
 $W X + b$\\[11pt]
+
+\subsection{Matmul}
+
 
 Multiplication of two matrices:
 
@@ -174,7 +177,6 @@ Multiplication of two matrices:
   \end{pmatrix}
 \end{math}
 
-
 $
 \vec{\mathbf{Y_1}} =\\
 ( 1 \times 2) + (0 \times 4) + (0 \times -2) = 2,\\
@@ -195,7 +197,11 @@ $
 ( 0 \times 4) + (0 \times 9) + (1 \times -3) = -3,\\
 ( 0 \times -2) + (0 \times -3) + (1 \times 7) = 7
 $
-\\[11pt]
+\lstinputlisting[language=Python, frame=single]
+{matmul.py}
+
+\subsection{Dot product}
+
 Linear network layer containing $\mathrm{m}$ neurons and $\mathrm{m} \times \mathrm{n}$ inputs.\\[11pt]
 \[
 \begin{pmatrix}
@@ -227,11 +233,6 @@ Linear network layer containing $\mathrm{m}$ neurons and $\mathrm{m} \times \mat
 \end{pmatrix}
 \]
 
-
-
-% \\
-\par
-\\[11pt]
 Simple Numpy function.
 
 \lstinputlisting[language=Python, frame=single]
